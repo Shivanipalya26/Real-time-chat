@@ -5,11 +5,12 @@ function ChatRoom({ username }: { username: string }) {
   const [messages, setMessages] = useState<{ message: string; sender: string }[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const WS_URL = import.meta.env.VITE_WS_URL
 
   useEffect(() => {
     if (wsRef.current) return;
 
-    const ws = new WebSocket("ws://localhost:5000");
+    const ws = new WebSocket(WS_URL);
 
     ws.onopen = () => {
         ws.send(
