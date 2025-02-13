@@ -9,5 +9,4 @@ The frontend is deployed on **Vercel**, and the backend is deployed on **Render*
 
 ✅ **Real-time messaging** using WebSockets  
 ✅ **Supports multiple users** in a chat room  
-✅ **Messages are displayed with usernames**
-✅ **Deployed on Vercel (Frontend) & Render (Backend)**  
+✅ **Messages** are displayed with usernames 
