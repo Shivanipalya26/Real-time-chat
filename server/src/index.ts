@@ -1,6 +1,11 @@
 import { WebSocketServer, WebSocket } from "ws";
+import dotenv from 'dotenv'
 
-const wss = new WebSocketServer({ port: 5000 });
+dotenv.config();
+
+const PORT = Number(process.env.PORT) || 5000;
+
+const wss = new WebSocketServer({ port: PORT });
 
 interface User {
     socket: WebSocket;
@@ -9,19 +14,15 @@ interface User {
 }
 
 let allSockets: User[] = [];
-let userCount = 0; 
 
 wss.on("connection", (socket) => {
-    userCount++;
-    const username = `User${userCount}`; 
-    console.log(`${username} connected.`);
 
     socket.on("message", (message) => {
         try {
             const parsedMessage = JSON.parse(message.toString());
 
             if (parsedMessage.type === "join") {
-                const roomId = parsedMessage.payload.roomId || "default";
+                const { roomId, username } = parsedMessage.payload;
                 allSockets.push({ socket, room: roomId, username });
                 console.log(`${username} joined room: ${roomId}`);
 
@@ -53,8 +54,9 @@ wss.on("connection", (socket) => {
     });
 
     socket.on("close", () => {
+        const disconnectedUser = allSockets.find(user => user.socket === socket)
         allSockets = allSockets.filter((client) => client.socket !== socket);
-        console.log(`${username} disconnected. Remaining users: ${allSockets.length}`);
+        console.log(`${disconnectedUser?.username || "Unknown"} disconnected. Remaining users: ${allSockets.length}`);
     });
 });
 
@@ -62,4 +64,4 @@ wss.on("error", (err) => {
     console.error("WebSocket server error:", err);
 });
 
-console.log("WebSocket server running on ws://localhost:8080");
+console.log(`WebSocket server running on ws://localhost:${PORT}`);
